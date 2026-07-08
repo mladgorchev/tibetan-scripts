@@ -5,10 +5,12 @@ import { LetterGrid } from './components/LetterGrid';
 import { LetterDetail } from './components/LetterDetail';
 import { Flashcards } from './components/Flashcards';
 import { Quiz } from './components/Quiz';
+import { WritePractice } from './components/WritePractice';
+import { Reading } from './components/Reading';
 import { getScript, ScriptId } from './data/scripts';
 import { consonants, vowels, numbers, Letter } from './data/letters';
 
-type Mode = 'browse' | 'flashcards' | 'quiz';
+type Mode = 'browse' | 'flashcards' | 'quiz' | 'write' | 'read';
 type GroupFilter = 'consonant' | 'vowel' | 'number';
 
 const groupLetters: Record<GroupFilter, Letter[]> = {
@@ -58,6 +60,12 @@ function App() {
         <button className={mode === 'quiz' ? 'active' : ''} onClick={() => setMode('quiz')}>
           Quiz
         </button>
+        <button className={mode === 'write' ? 'active' : ''} onClick={() => setMode('write')}>
+          Write
+        </button>
+        <button className={mode === 'read' ? 'active' : ''} onClick={() => setMode('read')}>
+          Read
+        </button>
       </nav>
 
       {mode === 'browse' && (
@@ -90,6 +98,12 @@ function App() {
       {mode === 'quiz' && (
         <Quiz key={scriptId} letters={consonants} fontFamily={script.fontFamily} />
       )}
+
+      {mode === 'write' && (
+        <WritePractice key={scriptId} letters={consonants} fontFamily={script.fontFamily} />
+      )}
+
+      {mode === 'read' && <Reading key={scriptId} fontFamily={script.fontFamily} />}
 
       <footer className="app-footer">
         Tibetan fonts (Qomolangma family, Yalasoo) via the{' '}
