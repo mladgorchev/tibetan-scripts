@@ -106,7 +106,8 @@ function App() {
       {mode === 'read' && <Reading key={scriptId} fontFamily={script.fontFamily} />}
 
       <footer className="app-footer">
-        Tibetan fonts (Qomolangma family, Yalasoo) via the{' '}
+        Uchen: Noto Serif Tibetan (Google Fonts). Ume &amp; Drutsa: Qomolangma family (Yalasoo),
+        via the{' '}
         <a href="https://github.com/OpenPecha/tibetan-fonts" target="_blank" rel="noreferrer">
           OpenPecha tibetan-fonts
         </a>{' '}

@@ -15,11 +15,11 @@ export const scripts: ScriptInfo[] = [
     id: 'uchen',
     name: 'Uchen',
     tibetanName: 'དབུ་ཅན།',
-    fontFamily: "'Qomolangma-UchenSarchen', 'Noto Serif Tibetan', serif",
+    fontFamily: "'Noto Serif Tibetan', 'Qomolangma-UchenSarchen', serif",
     description:
       'The formal, "headed" printed script. Used in books, scripture, and formal signage. This is the easiest script to start with and the foundation for reading the other two.',
     authentic: true,
-    fontCredit: 'Qomolangma-Uchen Sarchen',
+    fontCredit: 'Noto Serif Tibetan',
   },
   {
     id: 'ume',
