@@ -12,8 +12,11 @@ export const heartSutraLines: SutraLine[] = [
   { id: 'homage-2', tibetan: 'མ་སྐྱེས་མི་འགག་ནམ་མཁའི་ངོ་བོ་ཉིད།' },
   { id: 'homage-3', tibetan: 'སོ་སོ་རང་རིག་ཡེ་ཤེས་སྤྱོད་ཡུལ་བ།' },
   { id: 'homage-4', tibetan: 'དུས་གསུམ་རྒྱལ་བའི་ཡུམ་ལ་ཕྱག་འཚལ་ལོ།' },
+  { id: 'in-sanskrit', tibetan: '༈ རྒྱ་གར་སྐད་དུ།' },
   { id: 'sanskrit-title', tibetan: 'བྷ་ག་བ་ཏི་པྲཛྙཱ་པཱ་ར་མི་ཏཱ་ཧྲི་ད་ཡ།' },
+  { id: 'in-tibetan', tibetan: 'བོད་སྐད་དུ།' },
   { id: 'tibetan-title', tibetan: 'བཅོམ་ལྡན་འདས་མ་ཤེས་རབ་ཀྱི་ཕ་རོལ་ཏུ་ཕྱིན་པའི་སྙིང་པོ།' },
+  { id: 'chapter-one', tibetan: 'བམ་པོ་གཅིག་གོ' },
   { id: 'homage-body', tibetan: 'བཅོམ་ལྡན་འདས་མ་ཤེས་རབ་ཀྱི་ཕ་རོལ་ཏུ་ཕྱིན་པ་ལ་ཕྱག་འཚལ་ལོ།' },
   { id: 'setting-1', tibetan: 'འདི་སྐད་བདག་གིས་ཐོས་པ་དུས་གཅིག་ན།' },
   {
