@@ -63,3 +63,12 @@ export const numbers: Letter[] = [
 ];
 
 export const allLetters: Letter[] = [...consonants, ...vowels, ...numbers];
+
+// Filesystem-safe, unique filename stem for each letter's audio recording.
+// The 23rd consonant (id "'a", a-chung) and the 30th (id 'a', a-chen) would
+// otherwise both sanitize to "a" once the apostrophe is stripped.
+export function getAudioFileName(letter: Letter): string {
+  if (letter.id === "'a") return 'a-chung';
+  if (letter.id === 'a') return 'a-chen';
+  return letter.id.replace(/[^a-z0-9-]/gi, '');
+}
