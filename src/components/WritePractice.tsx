@@ -8,16 +8,68 @@ interface Props {
 }
 
 const CANVAS_SIZE = 300;
-
-// Bamboo-pen chisel brush: a fixed-angle flat nib swept along the pointer
-// path, like a real cut bamboo pen — strokes come out thick or thin
-// depending on travel direction rather than a uniform round line.
 const INK_COLOR = '#211509';
-const NIB_ANGLE = (-12 * Math.PI) / 180;
-const NIB_LENGTH = 17;
-const MIN_NIB_FACTOR = 0.28;
-const TAPER_DISTANCE = 26;
-const NIB_VEC = { x: Math.cos(NIB_ANGLE), y: Math.sin(NIB_ANGLE) };
+
+type BrushId = 'bamboo' | 'reed' | 'brush';
+
+interface ChiselBrushConfig {
+  kind: 'chisel';
+  label: string;
+  angleDeg: number;
+  length: number;
+  minFactor: number;
+  taperDistance: number;
+}
+
+interface RoundBrushConfig {
+  kind: 'round';
+  label: string;
+  minWidth: number;
+  maxWidth: number;
+  taperDistance: number;
+  speedSensitivity: number;
+  minSpeedFactor: number;
+}
+
+type BrushConfig = ChiselBrushConfig | RoundBrushConfig;
+
+// Three tools, two real techniques. Bamboo Pen and Fine Reed Pen are both
+// a chisel-edge nib swept at a fixed angle — ink comes out thick or thin
+// depending on travel direction, like a real cut bamboo/reed pen (broad
+// cut for Uchen, narrower sharper cut historically used for fast Ume/
+// Drutsa cursive). Ink Brush is a softer, isotropic brush whose width
+// responds to stroke speed instead of direction — closer to how a paint
+// brush behaves, offered as a stylistic option rather than a historically
+// documented tool for these scripts.
+const BRUSHES: Record<BrushId, BrushConfig> = {
+  bamboo: {
+    kind: 'chisel',
+    label: 'Bamboo Pen',
+    angleDeg: -12,
+    length: 17,
+    minFactor: 0.28,
+    taperDistance: 26,
+  },
+  reed: {
+    kind: 'chisel',
+    label: 'Fine Reed Pen',
+    angleDeg: -25,
+    length: 9,
+    minFactor: 0.22,
+    taperDistance: 14,
+  },
+  brush: {
+    kind: 'round',
+    label: 'Ink Brush',
+    minWidth: 3,
+    maxWidth: 15,
+    taperDistance: 18,
+    speedSensitivity: 0.55,
+    minSpeedFactor: 0.25,
+  },
+};
+
+const BRUSH_ORDER: BrushId[] = ['bamboo', 'brush', 'reed'];
 
 function shuffle<T>(arr: T[]): T[] {
   const copy = [...arr];
@@ -32,12 +84,17 @@ export function WritePractice({ letters, fontFamily }: Props) {
   const [order, setOrder] = useState(() => shuffle(letters));
   const [index, setIndex] = useState(0);
   const [showGhost, setShowGhost] = useState(true);
+  const [brushId, setBrushId] = useState<BrushId>('bamboo');
   const [result, setResult] = useState<ScoreResult | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const drawingRef = useRef(false);
   const lastPointRef = useRef<{ x: number; y: number } | null>(null);
   const strokeDistanceRef = useRef(0);
-  const lastNibFactorRef = useRef(MIN_NIB_FACTOR);
+  const lastMetricRef = useRef(0);
+  const lastTimeRef = useRef(0);
+  const brushRef = useRef<BrushConfig>(BRUSHES[brushId]);
+
+  brushRef.current = BRUSHES[brushId];
 
   const current = order[index];
 
@@ -66,18 +123,28 @@ export function WritePractice({ letters, fontFamily }: Props) {
     const canvas = canvasRef.current!;
     canvas.setPointerCapture(e.pointerId);
     drawingRef.current = true;
-    lastPointRef.current = getPos(e);
+    const pos = getPos(e);
+    lastPointRef.current = pos;
     strokeDistanceRef.current = 0;
-    lastNibFactorRef.current = MIN_NIB_FACTOR;
+    lastTimeRef.current = e.timeStamp;
 
-    // Lay down an initial dot so a tap/short stroke still leaves a mark.
+    const cfg = brushRef.current;
     const ctx = canvas.getContext('2d')!;
-    const p = lastPointRef.current;
-    const half = (NIB_LENGTH * MIN_NIB_FACTOR) / 2;
     ctx.fillStyle = INK_COLOR;
-    ctx.beginPath();
-    ctx.ellipse(p.x, p.y, half, half * 0.7, NIB_ANGLE, 0, Math.PI * 2);
-    ctx.fill();
+
+    if (cfg.kind === 'chisel') {
+      lastMetricRef.current = cfg.minFactor;
+      const half = (cfg.length * cfg.minFactor) / 2;
+      const angle = (cfg.angleDeg * Math.PI) / 180;
+      ctx.beginPath();
+      ctx.ellipse(pos.x, pos.y, half, half * 0.7, angle, 0, Math.PI * 2);
+      ctx.fill();
+    } else {
+      lastMetricRef.current = cfg.minWidth * 0.3;
+      ctx.beginPath();
+      ctx.arc(pos.x, pos.y, cfg.minWidth * 0.3, 0, Math.PI * 2);
+      ctx.fill();
+    }
   };
 
   const handlePointerMove = (e: React.PointerEvent<HTMLCanvasElement>) => {
@@ -86,28 +153,56 @@ export function WritePractice({ letters, fontFamily }: Props) {
     const ctx = canvas.getContext('2d')!;
     const pos = getPos(e);
     const last = lastPointRef.current ?? pos;
+    const cfg = brushRef.current;
 
     const segmentLength = Math.hypot(pos.x - last.x, pos.y - last.y);
     if (segmentLength < 0.5) return;
 
+    const dt = Math.max(1, e.timeStamp - lastTimeRef.current);
+    lastTimeRef.current = e.timeStamp;
     strokeDistanceRef.current += segmentLength;
-    const taper = Math.min(1, strokeDistanceRef.current / TAPER_DISTANCE);
-    const nibFactor = MIN_NIB_FACTOR + (1 - MIN_NIB_FACTOR) * taper;
-
-    const halfStart = (NIB_LENGTH * lastNibFactorRef.current) / 2;
-    const halfEnd = (NIB_LENGTH * nibFactor) / 2;
+    const taperFactor = Math.min(1, strokeDistanceRef.current / cfg.taperDistance);
 
     ctx.fillStyle = INK_COLOR;
-    ctx.beginPath();
-    ctx.moveTo(last.x + NIB_VEC.x * halfStart, last.y + NIB_VEC.y * halfStart);
-    ctx.lineTo(pos.x + NIB_VEC.x * halfEnd, pos.y + NIB_VEC.y * halfEnd);
-    ctx.lineTo(pos.x - NIB_VEC.x * halfEnd, pos.y - NIB_VEC.y * halfEnd);
-    ctx.lineTo(last.x - NIB_VEC.x * halfStart, last.y - NIB_VEC.y * halfStart);
-    ctx.closePath();
-    ctx.fill();
+
+    if (cfg.kind === 'chisel') {
+      const factor = cfg.minFactor + (1 - cfg.minFactor) * taperFactor;
+      const angle = (cfg.angleDeg * Math.PI) / 180;
+      const vec = { x: Math.cos(angle), y: Math.sin(angle) };
+      const halfStart = (cfg.length * lastMetricRef.current) / 2;
+      const halfEnd = (cfg.length * factor) / 2;
+
+      ctx.beginPath();
+      ctx.moveTo(last.x + vec.x * halfStart, last.y + vec.y * halfStart);
+      ctx.lineTo(pos.x + vec.x * halfEnd, pos.y + vec.y * halfEnd);
+      ctx.lineTo(pos.x - vec.x * halfEnd, pos.y - vec.y * halfEnd);
+      ctx.lineTo(last.x - vec.x * halfStart, last.y - vec.y * halfStart);
+      ctx.closePath();
+      ctx.fill();
+
+      lastMetricRef.current = factor;
+    } else {
+      const speed = segmentLength / dt; // px per ms
+      const speedFactor = Math.min(1, Math.max(cfg.minSpeedFactor, 1 - speed * cfg.speedSensitivity));
+      const factor = taperFactor * speedFactor;
+      const widthEnd = cfg.minWidth + (cfg.maxWidth - cfg.minWidth) * factor;
+      const widthStart = lastMetricRef.current;
+
+      const steps = Math.max(1, Math.ceil(segmentLength / 2));
+      for (let i = 1; i <= steps; i++) {
+        const t = i / steps;
+        const r = (widthStart + (widthEnd - widthStart) * t) / 2;
+        const x = last.x + (pos.x - last.x) * t;
+        const y = last.y + (pos.y - last.y) * t;
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      lastMetricRef.current = widthEnd;
+    }
 
     lastPointRef.current = pos;
-    lastNibFactorRef.current = nibFactor;
   };
 
   const endStroke = () => {
@@ -142,6 +237,18 @@ export function WritePractice({ letters, fontFamily }: Props) {
     <div className="write-practice">
       <div className="write-progress">
         {index + 1} / {order.length} &middot; {current.wylie}
+      </div>
+
+      <div className="brush-selector">
+        {BRUSH_ORDER.map((id) => (
+          <button
+            key={id}
+            className={brushId === id ? 'active' : ''}
+            onClick={() => setBrushId(id)}
+          >
+            {BRUSHES[id].label}
+          </button>
+        ))}
       </div>
 
       <div className="write-canvas-wrap">

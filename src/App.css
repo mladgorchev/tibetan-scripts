@@ -292,6 +292,19 @@
   opacity: 0.7;
 }
 
+.brush-selector {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.brush-selector button.active {
+  background: #646cff;
+  color: white;
+  border-color: #646cff;
+}
+
 .write-canvas-wrap {
   position: relative;
   width: 300px;
