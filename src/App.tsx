@@ -69,6 +69,11 @@ function BrowsePage({
             nga, nya, na, ma and ya are naturally low tone but shift to high tone when preceded by a
             prefix letter.
           </p>
+          <p className="tone-legend-note">
+            ga, ja, da and ba are no longer pronounced as voiced consonants in spoken Central
+            Tibetan — they sound like the aspirated, low-tone versions of ka/ca/ta/pa (i.e. kha,
+            chha, tha, pha), distinguished from kha/chha/tha/pha only by tone, not sound.
+          </p>
         </div>
       )}
       <div className="browse-layout">
