@@ -55,12 +55,21 @@ function BrowsePage({
         </button>
       </div>
       {group === 'consonant' && (
-        <p className="tone-legend">
-          Laid out in the traditional 8 rows by place of articulation.{' '}
-          <span className="letter-tone letter-tone-high legend-badge">H</span> high tone ·{' '}
-          <span className="letter-tone letter-tone-low legend-badge">L</span> low tone (nga/nya/na/ma/ya
-          shift to high tone after a prefix letter)
-        </p>
+        <div className="tone-legend">
+          <p className="tone-legend-intro">Laid out in the traditional 8 rows by place of articulation.</p>
+          <div className="tone-legend-items">
+            <span className="tone-legend-item">
+              <span className="tone-swatch tone-swatch-high">H</span> High tone
+            </span>
+            <span className="tone-legend-item">
+              <span className="tone-swatch tone-swatch-low">L</span> Low tone
+            </span>
+          </div>
+          <p className="tone-legend-note">
+            nga, nya, na, ma and ya are naturally low tone but shift to high tone when preceded by a
+            prefix letter.
+          </p>
+        </div>
       )}
       <LetterDetail
         letter={selected}

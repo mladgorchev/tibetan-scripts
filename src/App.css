@@ -112,17 +112,56 @@
 
 .tone-legend {
   text-align: center;
-  font-size: 0.78rem;
-  opacity: 0.65;
   max-width: 560px;
-  margin: 0 auto 1.25rem;
+  margin: 0 auto 1.5rem;
 }
 
-.legend-badge {
-  position: static;
+.tone-legend-intro {
+  font-size: 0.78rem;
+  opacity: 0.6;
+  margin: 0 0 0.6rem;
+}
+
+.tone-legend-items {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+}
+
+.tone-legend-item {
   display: inline-flex;
-  vertical-align: middle;
-  margin: 0 0.15rem;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.tone-swatch {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 50%;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.tone-swatch-high {
+  background: rgba(255, 180, 60, 0.25);
+  color: #ffb43c;
+}
+
+.tone-swatch-low {
+  background: rgba(100, 160, 255, 0.25);
+  color: #7fb0ff;
+}
+
+.tone-legend-note {
+  font-size: 0.78rem;
+  opacity: 0.6;
+  margin: 0;
 }
 
 .letter-detail {
