@@ -1,15 +1,19 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { Analytics } from '@vercel/analytics/react'
 import './index.css'
 import App from './App.tsx'
 import { RecordBooth } from './components/RecordBooth.tsx'
 
-const isRecordRoute = window.location.pathname.replace(/\/+$/, '') === '/record'
-
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    {isRecordRoute ? <RecordBooth /> : <App />}
+    <BrowserRouter>
+      <Routes>
+        <Route path="/record" element={<RecordBooth />} />
+        <Route path="/*" element={<App />} />
+      </Routes>
+    </BrowserRouter>
     <Analytics />
   </StrictMode>,
 )

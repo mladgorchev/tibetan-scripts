@@ -75,7 +75,26 @@
   margin-bottom: 1.5rem;
 }
 
-.mode-nav button.active {
+.mode-nav a {
+  display: inline-block;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: rgba(128, 128, 128, 0.12);
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+
+.mode-nav a:hover {
+  border-color: #646cff;
+}
+
+.mode-nav a.active {
   background: #646cff;
   color: white;
 }

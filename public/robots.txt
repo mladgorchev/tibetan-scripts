@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /record
+
+Sitemap: https://tibetan-scripts.gorchev.me/sitemap.xml

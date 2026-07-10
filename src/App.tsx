@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { NavLink, Route, Routes, useLocation } from 'react-router-dom';
 import './App.css';
 import { ScriptTabs } from './components/ScriptTabs';
 import { LetterGrid } from './components/LetterGrid';
@@ -10,7 +11,6 @@ import { Reading } from './components/Reading';
 import { getScript, ScriptId } from './data/scripts';
 import { consonants, vowels, numbers, Letter } from './data/letters';
 
-type Mode = 'browse' | 'flashcards' | 'quiz' | 'write' | 'read';
 type GroupFilter = 'consonant' | 'vowel' | 'number';
 
 const groupLetters: Record<GroupFilter, Letter[]> = {
@@ -19,19 +19,69 @@ const groupLetters: Record<GroupFilter, Letter[]> = {
   number: numbers,
 };
 
+const pageTitles: Record<string, string> = {
+  '/': 'Browse',
+  '/flashcards': 'Flashcards',
+  '/quiz': 'Quiz',
+  '/write': 'Write',
+  '/read': 'Read — The Heart Sutra',
+};
+
+function BrowsePage({
+  script,
+  group,
+  setGroup,
+  selected,
+  setSelected,
+}: {
+  script: ReturnType<typeof getScript>;
+  group: GroupFilter;
+  setGroup: (g: GroupFilter) => void;
+  selected: Letter | null;
+  setSelected: (l: Letter | null) => void;
+}) {
+  const letters = groupLetters[group];
+  return (
+    <>
+      <div className="group-filter">
+        <button className={group === 'consonant' ? 'active' : ''} onClick={() => setGroup('consonant')}>
+          Consonants (30)
+        </button>
+        <button className={group === 'vowel' ? 'active' : ''} onClick={() => setGroup('vowel')}>
+          Vowels
+        </button>
+        <button className={group === 'number' ? 'active' : ''} onClick={() => setGroup('number')}>
+          Numbers
+        </button>
+      </div>
+      <LetterDetail letter={selected} fontFamily={script.fontFamily} />
+      <LetterGrid
+        letters={letters}
+        fontFamily={script.fontFamily}
+        onSelect={setSelected}
+        selectedId={selected?.id}
+      />
+    </>
+  );
+}
+
 function App() {
   const [scriptId, setScriptId] = useState<ScriptId>('uchen');
-  const [mode, setMode] = useState<Mode>('browse');
   const [group, setGroup] = useState<GroupFilter>('consonant');
   const [selected, setSelected] = useState<Letter | null>(null);
+  const location = useLocation();
 
   const script = getScript(scriptId);
-  const letters = groupLetters[group];
 
   const handleScriptChange = (id: ScriptId) => {
     setScriptId(id);
     setSelected(null);
   };
+
+  useEffect(() => {
+    const pageTitle = pageTitles[location.pathname] ?? 'Browse';
+    document.title = `${pageTitle} — Learn Tibetan Scripts`;
+  }, [location.pathname]);
 
   return (
     <div className="app">
@@ -48,62 +98,50 @@ function App() {
       )}
 
       <nav className="mode-nav">
-        <button className={mode === 'browse' ? 'active' : ''} onClick={() => setMode('browse')}>
+        <NavLink to="/" end className={({ isActive }) => (isActive ? 'active' : '')}>
           Browse
-        </button>
-        <button
-          className={mode === 'flashcards' ? 'active' : ''}
-          onClick={() => setMode('flashcards')}
-        >
+        </NavLink>
+        <NavLink to="/flashcards" className={({ isActive }) => (isActive ? 'active' : '')}>
           Flashcards
-        </button>
-        <button className={mode === 'quiz' ? 'active' : ''} onClick={() => setMode('quiz')}>
+        </NavLink>
+        <NavLink to="/quiz" className={({ isActive }) => (isActive ? 'active' : '')}>
           Quiz
-        </button>
-        <button className={mode === 'write' ? 'active' : ''} onClick={() => setMode('write')}>
+        </NavLink>
+        <NavLink to="/write" className={({ isActive }) => (isActive ? 'active' : '')}>
           Write
-        </button>
-        <button className={mode === 'read' ? 'active' : ''} onClick={() => setMode('read')}>
+        </NavLink>
+        <NavLink to="/read" className={({ isActive }) => (isActive ? 'active' : '')}>
           Read
-        </button>
+        </NavLink>
       </nav>
 
-      {mode === 'browse' && (
-        <>
-          <div className="group-filter">
-            <button className={group === 'consonant' ? 'active' : ''} onClick={() => setGroup('consonant')}>
-              Consonants (30)
-            </button>
-            <button className={group === 'vowel' ? 'active' : ''} onClick={() => setGroup('vowel')}>
-              Vowels
-            </button>
-            <button className={group === 'number' ? 'active' : ''} onClick={() => setGroup('number')}>
-              Numbers
-            </button>
-          </div>
-          <LetterDetail letter={selected} fontFamily={script.fontFamily} />
-          <LetterGrid
-            letters={letters}
-            fontFamily={script.fontFamily}
-            onSelect={setSelected}
-            selectedId={selected?.id}
-          />
-        </>
-      )}
-
-      {mode === 'flashcards' && (
-        <Flashcards key={scriptId} letters={consonants} fontFamily={script.fontFamily} />
-      )}
-
-      {mode === 'quiz' && (
-        <Quiz key={scriptId} letters={consonants} fontFamily={script.fontFamily} />
-      )}
-
-      {mode === 'write' && (
-        <WritePractice key={scriptId} letters={consonants} fontFamily={script.fontFamily} />
-      )}
-
-      {mode === 'read' && <Reading key={scriptId} fontFamily={script.fontFamily} />}
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <BrowsePage
+              script={script}
+              group={group}
+              setGroup={setGroup}
+              selected={selected}
+              setSelected={setSelected}
+            />
+          }
+        />
+        <Route
+          path="/flashcards"
+          element={<Flashcards key={scriptId} letters={consonants} fontFamily={script.fontFamily} />}
+        />
+        <Route
+          path="/quiz"
+          element={<Quiz key={scriptId} letters={consonants} fontFamily={script.fontFamily} />}
+        />
+        <Route
+          path="/write"
+          element={<WritePractice key={scriptId} letters={consonants} fontFamily={script.fontFamily} />}
+        />
+        <Route path="/read" element={<Reading key={scriptId} fontFamily={script.fontFamily} />} />
+      </Routes>
 
       <footer className="app-footer">
         Uchen: Noto Serif Tibetan (Google Fonts). Ume &amp; Drutsa: Qomolangma family (Yalasoo),
