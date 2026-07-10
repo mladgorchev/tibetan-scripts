@@ -10,7 +10,10 @@ export function LetterDetail({ letter, fontFamily, glyphOffsetEm = 0 }: Props) {
   if (!letter) {
     return (
       <div className="letter-detail empty">
-        <p>Select a letter above to see it up close.</p>
+        <p>
+          <span className="detail-hint-desktop">Select a letter from the left to see it up close.</span>
+          <span className="detail-hint-mobile">Select a letter below to see it up close.</span>
+        </p>
       </div>
     );
   }

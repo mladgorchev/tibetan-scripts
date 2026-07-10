@@ -164,16 +164,52 @@
   margin: 0;
 }
 
+.browse-layout {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem;
+}
+
+.browse-grid-col {
+  flex: 1;
+  min-width: 0;
+}
+
+.browse-detail-col {
+  flex: 0 0 230px;
+  position: sticky;
+  top: 1rem;
+}
+
+@media (max-width: 760px) {
+  .browse-layout {
+    flex-direction: column;
+  }
+
+  .browse-detail-col {
+    order: -1;
+    flex: none;
+    width: 100%;
+    position: static;
+  }
+}
+
 .letter-detail {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1rem;
   justify-content: center;
   min-height: 100px;
   margin-bottom: 1.5rem;
   padding: 1rem;
   border-radius: 12px;
   background: rgba(128, 128, 128, 0.08);
+  text-align: center;
+}
+
+.browse-detail-col .letter-detail {
+  flex-direction: column;
 }
 
 .letter-detail.empty {
@@ -186,6 +222,10 @@
   line-height: 1;
 }
 
+.browse-detail-col .letter-detail-glyph {
+  font-size: 3.2rem;
+}
+
 .letter-detail-wylie {
   font-size: 1.6rem;
   font-weight: 600;
@@ -193,6 +233,20 @@
 
 .letter-detail-pronunciation {
   opacity: 0.75;
+}
+
+.detail-hint-mobile {
+  display: none;
+}
+
+@media (max-width: 760px) {
+  .detail-hint-desktop {
+    display: none;
+  }
+
+  .detail-hint-mobile {
+    display: inline;
+  }
 }
 
 .letter-grid {

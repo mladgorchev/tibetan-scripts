@@ -71,19 +71,25 @@ function BrowsePage({
           </p>
         </div>
       )}
-      <LetterDetail
-        letter={selected}
-        fontFamily={script.fontFamily}
-        glyphOffsetEm={script.glyphOffsetEm}
-      />
-      <LetterGrid
-        letters={letters}
-        fontFamily={script.fontFamily}
-        glyphOffsetEm={script.glyphOffsetEm}
-        onSelect={setSelected}
-        selectedId={selected?.id}
-        rows={group === 'consonant' ? consonantRows : undefined}
-      />
+      <div className="browse-layout">
+        <div className="browse-grid-col">
+          <LetterGrid
+            letters={letters}
+            fontFamily={script.fontFamily}
+            glyphOffsetEm={script.glyphOffsetEm}
+            onSelect={setSelected}
+            selectedId={selected?.id}
+            rows={group === 'consonant' ? consonantRows : undefined}
+          />
+        </div>
+        <div className="browse-detail-col">
+          <LetterDetail
+            letter={selected}
+            fontFamily={script.fontFamily}
+            glyphOffsetEm={script.glyphOffsetEm}
+          />
+        </div>
+      </div>
     </>
   );
 }
