@@ -4,6 +4,7 @@ import { Letter } from '../data/letters';
 interface Props {
   letters: Letter[];
   fontFamily: string;
+  glyphOffsetEm?: number;
 }
 
 function shuffle<T>(arr: T[]): T[] {
@@ -15,7 +16,7 @@ function shuffle<T>(arr: T[]): T[] {
   return copy;
 }
 
-export function Flashcards({ letters, fontFamily }: Props) {
+export function Flashcards({ letters, fontFamily, glyphOffsetEm = 0 }: Props) {
   const [order, setOrder] = useState(() => shuffle(letters));
   const [index, setIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
@@ -47,7 +48,10 @@ export function Flashcards({ letters, fontFamily }: Props) {
       <div className="flashcards-progress">{progressLabel}</div>
       <div className="flashcard" onClick={() => setFlipped((f) => !f)}>
         {!flipped ? (
-          <span className="flashcard-glyph" style={{ fontFamily }}>
+          <span
+            className="flashcard-glyph"
+            style={{ fontFamily, transform: `translateY(${glyphOffsetEm}em)` }}
+          >
             {current.tibetan}
           </span>
         ) : (

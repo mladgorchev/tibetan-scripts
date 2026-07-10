@@ -4,6 +4,7 @@ import { Letter } from '../data/letters';
 interface Props {
   letters: Letter[];
   fontFamily: string;
+  glyphOffsetEm?: number;
 }
 
 function shuffle<T>(arr: T[]): T[] {
@@ -20,7 +21,7 @@ function makeQuestion(letters: Letter[], target: Letter) {
   return shuffle([target, ...distractors]);
 }
 
-export function Quiz({ letters, fontFamily }: Props) {
+export function Quiz({ letters, fontFamily, glyphOffsetEm = 0 }: Props) {
   const [order] = useState(() => shuffle(letters));
   const [index, setIndex] = useState(0);
   const [score, setScore] = useState(0);
@@ -74,7 +75,7 @@ export function Quiz({ letters, fontFamily }: Props) {
         Question {index + 1} / {order.length} &middot; Score {score}
       </div>
       <div className="quiz-prompt">
-        <span className="quiz-glyph" style={{ fontFamily }}>
+        <span className="quiz-glyph" style={{ fontFamily, transform: `translateY(${glyphOffsetEm}em)` }}>
           {current.tibetan}
         </span>
         <p>What is this letter?</p>

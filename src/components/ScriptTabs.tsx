@@ -14,7 +14,10 @@ export function ScriptTabs({ active, onChange }: Props) {
           className={`script-tab ${active === s.id ? 'active' : ''}`}
           onClick={() => onChange(s.id)}
         >
-          <span className="script-tab-tibetan" style={{ fontFamily: s.fontFamily }}>
+          <span
+            className="script-tab-tibetan"
+            style={{ fontFamily: s.fontFamily, transform: `translateY(${s.glyphOffsetEm}em)` }}
+          >
             {s.tibetanName}
           </span>
           <span className="script-tab-name">{s.name}</span>

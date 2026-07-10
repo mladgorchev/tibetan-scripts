@@ -5,6 +5,7 @@ import { scoreDrawing, ScoreResult } from '../utils/handwriting';
 interface Props {
   letters: Letter[];
   fontFamily: string;
+  glyphOffsetEm?: number;
 }
 
 const CANVAS_SIZE = 300;
@@ -80,7 +81,7 @@ function shuffle<T>(arr: T[]): T[] {
   return copy;
 }
 
-export function WritePractice({ letters, fontFamily }: Props) {
+export function WritePractice({ letters, fontFamily, glyphOffsetEm = 0 }: Props) {
   const [order, setOrder] = useState(() => shuffle(letters));
   const [index, setIndex] = useState(0);
   const [showGhost, setShowGhost] = useState(true);
@@ -253,7 +254,10 @@ export function WritePractice({ letters, fontFamily }: Props) {
 
       <div className="write-canvas-wrap">
         {showGhost && (
-          <div className="write-ghost" style={{ fontFamily }}>
+          <div
+            className="write-ghost"
+            style={{ fontFamily, transform: `translateY(${glyphOffsetEm}em)` }}
+          >
             {current.tibetan}
           </div>
         )}

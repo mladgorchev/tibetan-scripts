@@ -54,10 +54,15 @@ function BrowsePage({
           Numbers
         </button>
       </div>
-      <LetterDetail letter={selected} fontFamily={script.fontFamily} />
+      <LetterDetail
+        letter={selected}
+        fontFamily={script.fontFamily}
+        glyphOffsetEm={script.glyphOffsetEm}
+      />
       <LetterGrid
         letters={letters}
         fontFamily={script.fontFamily}
+        glyphOffsetEm={script.glyphOffsetEm}
         onSelect={setSelected}
         selectedId={selected?.id}
       />
@@ -130,15 +135,36 @@ function App() {
         />
         <Route
           path="/flashcards"
-          element={<Flashcards key={scriptId} letters={consonants} fontFamily={script.fontFamily} />}
+          element={
+            <Flashcards
+              key={scriptId}
+              letters={consonants}
+              fontFamily={script.fontFamily}
+              glyphOffsetEm={script.glyphOffsetEm}
+            />
+          }
         />
         <Route
           path="/quiz"
-          element={<Quiz key={scriptId} letters={consonants} fontFamily={script.fontFamily} />}
+          element={
+            <Quiz
+              key={scriptId}
+              letters={consonants}
+              fontFamily={script.fontFamily}
+              glyphOffsetEm={script.glyphOffsetEm}
+            />
+          }
         />
         <Route
           path="/write"
-          element={<WritePractice key={scriptId} letters={consonants} fontFamily={script.fontFamily} />}
+          element={
+            <WritePractice
+              key={scriptId}
+              letters={consonants}
+              fontFamily={script.fontFamily}
+              glyphOffsetEm={script.glyphOffsetEm}
+            />
+          }
         />
         <Route path="/read" element={<Reading key={scriptId} fontFamily={script.fontFamily} />} />
       </Routes>

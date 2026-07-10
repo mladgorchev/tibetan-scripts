@@ -3,9 +3,10 @@ import { Letter } from '../data/letters';
 interface Props {
   letter: Letter | null;
   fontFamily: string;
+  glyphOffsetEm?: number;
 }
 
-export function LetterDetail({ letter, fontFamily }: Props) {
+export function LetterDetail({ letter, fontFamily, glyphOffsetEm = 0 }: Props) {
   if (!letter) {
     return (
       <div className="letter-detail empty">
@@ -16,7 +17,10 @@ export function LetterDetail({ letter, fontFamily }: Props) {
 
   return (
     <div className="letter-detail">
-      <div className="letter-detail-glyph" style={{ fontFamily }}>
+      <div
+        className="letter-detail-glyph"
+        style={{ fontFamily, transform: `translateY(${glyphOffsetEm}em)` }}
+      >
         {letter.tibetan}
       </div>
       <div className="letter-detail-info">
