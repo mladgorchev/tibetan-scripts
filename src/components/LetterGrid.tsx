@@ -7,6 +7,7 @@ interface Props {
   onSelect: (letter: Letter) => void;
   selectedId?: string;
   rows?: ConsonantRow[];
+  rowLabels?: Record<string, string>;
 }
 
 function LetterCard({
@@ -36,7 +37,15 @@ function LetterCard({
   );
 }
 
-export function LetterGrid({ letters, fontFamily, glyphOffsetEm = 0, onSelect, selectedId, rows }: Props) {
+export function LetterGrid({
+  letters,
+  fontFamily,
+  glyphOffsetEm = 0,
+  onSelect,
+  selectedId,
+  rows,
+  rowLabels,
+}: Props) {
   if (rows) {
     const byId = new Map(letters.map((l) => [l.id, l]));
     return (
@@ -46,7 +55,7 @@ export function LetterGrid({ letters, fontFamily, glyphOffsetEm = 0, onSelect, s
           if (rowLetters.length === 0) return null;
           return (
             <div key={row.label} className="letter-row">
-              <div className="letter-row-label">{row.label}</div>
+              <div className="letter-row-label">{rowLabels?.[row.label] ?? row.label}</div>
               <div className="letter-row-cards">
                 {rowLetters.map((l) => (
                   <LetterCard

@@ -1,10 +1,12 @@
 import { useMemo, useState } from 'react';
 import { Letter } from '../data/letters';
+import { Dictionary } from '../i18n/translations';
 
 interface Props {
   letters: Letter[];
   fontFamily: string;
   glyphOffsetEm?: number;
+  t: Dictionary;
 }
 
 function shuffle<T>(arr: T[]): T[] {
@@ -21,7 +23,7 @@ function makeQuestion(letters: Letter[], target: Letter) {
   return shuffle([target, ...distractors]);
 }
 
-export function Quiz({ letters, fontFamily, glyphOffsetEm = 0 }: Props) {
+export function Quiz({ letters, fontFamily, glyphOffsetEm = 0, t }: Props) {
   const [order] = useState(() => shuffle(letters));
   const [index, setIndex] = useState(0);
   const [score, setScore] = useState(0);
@@ -38,9 +40,7 @@ export function Quiz({ letters, fontFamily, glyphOffsetEm = 0 }: Props) {
   if (finished || !current) {
     return (
       <div className="quiz quiz-done">
-        <h3>
-          Score: {score} / {order.length}
-        </h3>
+        <h3>{t.quizScoreFinal(score, order.length)}</h3>
         <button
           onClick={() => {
             setIndex(0);
@@ -49,7 +49,7 @@ export function Quiz({ letters, fontFamily, glyphOffsetEm = 0 }: Props) {
             setFinished(false);
           }}
         >
-          Try again
+          {t.tryAgain}
         </button>
       </div>
     );
@@ -71,14 +71,12 @@ export function Quiz({ letters, fontFamily, glyphOffsetEm = 0 }: Props) {
 
   return (
     <div className="quiz">
-      <div className="quiz-progress">
-        Question {index + 1} / {order.length} &middot; Score {score}
-      </div>
+      <div className="quiz-progress">{t.quizProgress(index + 1, order.length, score)}</div>
       <div className="quiz-prompt">
         <span className="quiz-glyph" style={{ fontFamily, transform: `translateY(${glyphOffsetEm}em)` }}>
           {current.tibetan}
         </span>
-        <p>What is this letter?</p>
+        <p>{t.quizQuestion}</p>
       </div>
       <div className="quiz-options">
         {options.map((opt) => {

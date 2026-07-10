@@ -1,8 +1,20 @@
+export type HintKey =
+  | 'drawFirst'
+  | 'bigger'
+  | 'smaller'
+  | 'shiftLeft'
+  | 'shiftRight'
+  | 'shiftUp'
+  | 'shiftDown'
+  | 'great'
+  | 'good'
+  | 'keepPracticing';
+
 export interface ScoreResult {
   score: number;
   coverage: number;
   precision: number;
-  hints: string[];
+  hints: HintKey[];
 }
 
 function getAlphaMask(imageData: ImageData, threshold: number): Uint8Array {
@@ -102,7 +114,7 @@ export function scoreDrawing(
   const userStats = maskStats(userStrict, size, size);
 
   if (!userStats || !refStats) {
-    return { score: 0, coverage: 0, precision: 0, hints: ['Draw the letter in the box first.'] };
+    return { score: 0, coverage: 0, precision: 0, hints: ['drawFirst'] };
   }
 
   let coverageMatches = 0;
@@ -115,23 +127,23 @@ export function scoreDrawing(
 
   const score = Math.round(100 * (0.6 * coverage + 0.4 * precision));
 
-  const hints: string[] = [];
+  const hints: HintKey[] = [];
   const refW = refStats.bbox.w || 1;
   const refH = refStats.bbox.h || 1;
   const userW = userStats.bbox.w || 1;
   const userH = userStats.bbox.h || 1;
   const sizeRatio = (userW / refW + userH / refH) / 2;
-  if (sizeRatio < 0.7) hints.push('Try drawing it a bit bigger.');
-  else if (sizeRatio > 1.4) hints.push('Try drawing it a bit smaller.');
+  if (sizeRatio < 0.7) hints.push('bigger');
+  else if (sizeRatio > 1.4) hints.push('smaller');
 
   const dx = (userStats.centroid.x - refStats.centroid.x) / size;
   const dy = (userStats.centroid.y - refStats.centroid.y) / size;
-  if (Math.abs(dx) > 0.08) hints.push(dx > 0 ? 'Shift it to the left.' : 'Shift it to the right.');
-  if (Math.abs(dy) > 0.08) hints.push(dy > 0 ? 'Shift it up.' : 'Shift it down.');
+  if (Math.abs(dx) > 0.08) hints.push(dx > 0 ? 'shiftLeft' : 'shiftRight');
+  if (Math.abs(dy) > 0.08) hints.push(dy > 0 ? 'shiftUp' : 'shiftDown');
 
-  if (score >= 85) hints.unshift('Great shape!');
-  else if (score >= 65) hints.unshift('Good — close to the reference shape.');
-  else hints.unshift('Keep practicing this one.');
+  if (score >= 85) hints.unshift('great');
+  else if (score >= 65) hints.unshift('good');
+  else hints.unshift('keepPracticing');
 
   return { score, coverage, precision, hints };
 }

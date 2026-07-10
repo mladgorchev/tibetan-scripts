@@ -1,10 +1,12 @@
 import { useMemo, useState } from 'react';
 import { Letter } from '../data/letters';
+import { Dictionary } from '../i18n/translations';
 
 interface Props {
   letters: Letter[];
   fontFamily: string;
   glyphOffsetEm?: number;
+  t: Dictionary;
 }
 
 function shuffle<T>(arr: T[]): T[] {
@@ -16,7 +18,7 @@ function shuffle<T>(arr: T[]): T[] {
   return copy;
 }
 
-export function Flashcards({ letters, fontFamily, glyphOffsetEm = 0 }: Props) {
+export function Flashcards({ letters, fontFamily, glyphOffsetEm = 0, t }: Props) {
   const [order, setOrder] = useState(() => shuffle(letters));
   const [index, setIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
@@ -39,7 +41,10 @@ export function Flashcards({ letters, fontFamily, glyphOffsetEm = 0 }: Props) {
     setIndex((i) => (i - 1 + order.length) % order.length);
   };
 
-  const progressLabel = useMemo(() => `${index + 1} / ${order.length}`, [index, order.length]);
+  const progressLabel = useMemo(
+    () => t.flashcardProgress(index + 1, order.length),
+    [index, order.length, t],
+  );
 
   if (!current) return null;
 
@@ -61,11 +66,11 @@ export function Flashcards({ letters, fontFamily, glyphOffsetEm = 0 }: Props) {
           </div>
         )}
       </div>
-      <p className="flashcard-hint">Click the card to flip it</p>
+      <p className="flashcard-hint">{t.flashcardHint}</p>
       <div className="flashcard-controls">
-        <button onClick={prev}>Prev</button>
-        <button onClick={next}>Next</button>
-        <button onClick={restart}>Shuffle / Restart</button>
+        <button onClick={prev}>{t.prev}</button>
+        <button onClick={next}>{t.next}</button>
+        <button onClick={restart}>{t.shuffleRestart}</button>
       </div>
     </div>
   );

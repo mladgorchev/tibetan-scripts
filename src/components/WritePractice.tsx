@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { Letter } from '../data/letters';
-import { scoreDrawing, ScoreResult } from '../utils/handwriting';
+import { HintKey, scoreDrawing, ScoreResult } from '../utils/handwriting';
+import { Dictionary } from '../i18n/translations';
 
 interface Props {
   letters: Letter[];
   fontFamily: string;
   glyphOffsetEm?: number;
+  t: Dictionary;
 }
 
 const CANVAS_SIZE = 300;
@@ -15,7 +17,6 @@ type BrushId = 'bamboo' | 'reed' | 'brush';
 
 interface ChiselBrushConfig {
   kind: 'chisel';
-  label: string;
   angleDeg: number;
   length: number;
   minFactor: number;
@@ -24,7 +25,6 @@ interface ChiselBrushConfig {
 
 interface RoundBrushConfig {
   kind: 'round';
-  label: string;
   minWidth: number;
   maxWidth: number;
   taperDistance: number;
@@ -43,25 +43,10 @@ type BrushConfig = ChiselBrushConfig | RoundBrushConfig;
 // brush behaves, offered as a stylistic option rather than a historically
 // documented tool for these scripts.
 const BRUSHES: Record<BrushId, BrushConfig> = {
-  bamboo: {
-    kind: 'chisel',
-    label: 'Bamboo Pen',
-    angleDeg: -12,
-    length: 17,
-    minFactor: 0.28,
-    taperDistance: 26,
-  },
-  reed: {
-    kind: 'chisel',
-    label: 'Fine Reed Pen',
-    angleDeg: -25,
-    length: 9,
-    minFactor: 0.22,
-    taperDistance: 14,
-  },
+  bamboo: { kind: 'chisel', angleDeg: -12, length: 17, minFactor: 0.28, taperDistance: 26 },
+  reed: { kind: 'chisel', angleDeg: -25, length: 9, minFactor: 0.22, taperDistance: 14 },
   brush: {
     kind: 'round',
-    label: 'Ink Brush',
     minWidth: 3,
     maxWidth: 15,
     taperDistance: 18,
@@ -81,7 +66,26 @@ function shuffle<T>(arr: T[]): T[] {
   return copy;
 }
 
-export function WritePractice({ letters, fontFamily, glyphOffsetEm = 0 }: Props) {
+const brushLabelKeys: Record<BrushId, keyof Dictionary> = {
+  bamboo: 'brushBamboo',
+  reed: 'brushReed',
+  brush: 'brushInk',
+};
+
+const hintTextKeys: Record<HintKey, keyof Dictionary> = {
+  drawFirst: 'writeHintDrawFirst',
+  bigger: 'writeHintBigger',
+  smaller: 'writeHintSmaller',
+  shiftLeft: 'writeHintShiftLeft',
+  shiftRight: 'writeHintShiftRight',
+  shiftUp: 'writeHintShiftUp',
+  shiftDown: 'writeHintShiftDown',
+  great: 'writeHintGreat',
+  good: 'writeHintGood',
+  keepPracticing: 'writeHintKeepPracticing',
+};
+
+export function WritePractice({ letters, fontFamily, glyphOffsetEm = 0, t }: Props) {
   const [order, setOrder] = useState(() => shuffle(letters));
   const [index, setIndex] = useState(0);
   const [showGhost, setShowGhost] = useState(true);
@@ -236,9 +240,7 @@ export function WritePractice({ letters, fontFamily, glyphOffsetEm = 0 }: Props)
 
   return (
     <div className="write-practice">
-      <div className="write-progress">
-        {index + 1} / {order.length} &middot; {current.wylie}
-      </div>
+      <div className="write-progress">{t.writeProgress(index + 1, order.length, current.wylie)}</div>
 
       <div className="brush-selector">
         {BRUSH_ORDER.map((id) => (
@@ -247,7 +249,7 @@ export function WritePractice({ letters, fontFamily, glyphOffsetEm = 0 }: Props)
             className={brushId === id ? 'active' : ''}
             onClick={() => setBrushId(id)}
           >
-            {BRUSHES[id].label}
+            {t[brushLabelKeys[id]] as string}
           </button>
         ))}
       </div>
@@ -276,15 +278,15 @@ export function WritePractice({ letters, fontFamily, glyphOffsetEm = 0 }: Props)
 
       <label className="write-ghost-toggle">
         <input type="checkbox" checked={showGhost} onChange={(e) => setShowGhost(e.target.checked)} />
-        Show reference letter
+        {t.showReferenceLetter}
       </label>
 
       <div className="write-controls">
-        <button onClick={handleClear}>Clear</button>
-        <button onClick={handleCheck}>Check</button>
-        <button onClick={() => goto(index - 1)}>Prev</button>
-        <button onClick={() => goto(index + 1)}>Next</button>
-        <button onClick={restart}>Shuffle / Restart</button>
+        <button onClick={handleClear}>{t.clear}</button>
+        <button onClick={handleCheck}>{t.check}</button>
+        <button onClick={() => goto(index - 1)}>{t.prev}</button>
+        <button onClick={() => goto(index + 1)}>{t.next}</button>
+        <button onClick={restart}>{t.shuffleRestart}</button>
       </div>
 
       {result && (
@@ -292,7 +294,7 @@ export function WritePractice({ letters, fontFamily, glyphOffsetEm = 0 }: Props)
           <div className="write-score">{result.score}%</div>
           <ul>
             {result.hints.map((h, i) => (
-              <li key={i}>{h}</li>
+              <li key={i}>{t[hintTextKeys[h]] as string}</li>
             ))}
           </ul>
         </div>

@@ -1,13 +1,15 @@
 import { heartSutraLines } from '../data/heartSutra';
+import { Dictionary } from '../i18n/translations';
 
 interface Props {
   fontFamily: string;
+  t: Dictionary;
 }
 
-export function Reading({ fontFamily }: Props) {
+export function Reading({ fontFamily, t }: Props) {
   return (
     <div className="reading">
-      <h2 className="reading-title">The Heart Sutra</h2>
+      <h2 className="reading-title">{t.readTitle}</h2>
       <p className="reading-subtitle">
         བཅོམ་ལྡན་འདས་མ་ཤེས་རབ་ཀྱི་ཕ་རོལ་ཏུ་ཕྱིན་པའི་སྙིང་པོ
       </p>
@@ -19,7 +21,7 @@ export function Reading({ fontFamily }: Props) {
         ))}
       </div>
       <p className="reading-credit">
-        Tibetan text: the traditional recension published by{' '}
+        {t.readCreditPrefix}{' '}
         <a href="https://www.lotsawahouse.org/bo/words-of-the-buddha/heart-sutra-with-extras" target="_blank" rel="noreferrer">
           Lotsawa House
         </a>

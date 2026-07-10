@@ -8,8 +8,11 @@ import { Flashcards } from './components/Flashcards';
 import { Quiz } from './components/Quiz';
 import { WritePractice } from './components/WritePractice';
 import { Reading } from './components/Reading';
+import { LanguageSwitcher } from './components/LanguageSwitcher';
 import { getScript, ScriptId } from './data/scripts';
 import { consonants, consonantRows, vowels, numbers, Letter } from './data/letters';
+import { useLanguage } from './i18n/LanguageContext';
+import { Dictionary } from './i18n/translations';
 
 type GroupFilter = 'consonant' | 'vowel' | 'number';
 
@@ -19,61 +22,48 @@ const groupLetters: Record<GroupFilter, Letter[]> = {
   number: numbers,
 };
 
-const pageTitles: Record<string, string> = {
-  '/': 'Browse',
-  '/flashcards': 'Flashcards',
-  '/quiz': 'Quiz',
-  '/write': 'Write',
-  '/read': 'Read — The Heart Sutra',
-};
-
 function BrowsePage({
   script,
   group,
   setGroup,
   selected,
   setSelected,
+  t,
 }: {
   script: ReturnType<typeof getScript>;
   group: GroupFilter;
   setGroup: (g: GroupFilter) => void;
   selected: Letter | null;
   setSelected: (l: Letter | null) => void;
+  t: Dictionary;
 }) {
   const letters = groupLetters[group];
   return (
     <>
       <div className="group-filter">
         <button className={group === 'consonant' ? 'active' : ''} onClick={() => setGroup('consonant')}>
-          Consonants (30)
+          {t.filterConsonants(30)}
         </button>
         <button className={group === 'vowel' ? 'active' : ''} onClick={() => setGroup('vowel')}>
-          Vowels
+          {t.filterVowels}
         </button>
         <button className={group === 'number' ? 'active' : ''} onClick={() => setGroup('number')}>
-          Numbers
+          {t.filterNumbers}
         </button>
       </div>
       {group === 'consonant' && (
         <div className="tone-legend">
-          <p className="tone-legend-intro">Laid out in the traditional 8 rows by place of articulation.</p>
+          <p className="tone-legend-intro">{t.toneLegendIntro}</p>
           <div className="tone-legend-items">
             <span className="tone-legend-item">
-              <span className="tone-swatch tone-swatch-high">H</span> High tone
+              <span className="tone-swatch tone-swatch-high">H</span> {t.toneHigh}
             </span>
             <span className="tone-legend-item">
-              <span className="tone-swatch tone-swatch-low">L</span> Low tone
+              <span className="tone-swatch tone-swatch-low">L</span> {t.toneLow}
             </span>
           </div>
-          <p className="tone-legend-note">
-            nga, nya, na, ma and ya are naturally low tone but shift to high tone when preceded by a
-            prefix letter.
-          </p>
-          <p className="tone-legend-note">
-            ga, ja, da and ba are no longer pronounced as voiced consonants in spoken Central
-            Tibetan — they sound like the aspirated, low-tone versions of ka/ca/ta/pa (i.e. kha,
-            chha, tha, pha), distinguished from kha/chha/tha/pha only by tone, not sound.
-          </p>
+          <p className="tone-legend-note">{t.toneLegendNoteNasals}</p>
+          <p className="tone-legend-note">{t.toneLegendNoteVoiced}</p>
         </div>
       )}
       <div className="browse-layout">
@@ -85,6 +75,7 @@ function BrowsePage({
             onSelect={setSelected}
             selectedId={selected?.id}
             rows={group === 'consonant' ? consonantRows : undefined}
+            rowLabels={t.rowLabels}
           />
         </div>
         <div className="browse-detail-col">
@@ -92,6 +83,7 @@ function BrowsePage({
             letter={selected}
             fontFamily={script.fontFamily}
             glyphOffsetEm={script.glyphOffsetEm}
+            t={t}
           />
         </div>
       </div>
@@ -104,8 +96,17 @@ function App() {
   const [group, setGroup] = useState<GroupFilter>('consonant');
   const [selected, setSelected] = useState<Letter | null>(null);
   const location = useLocation();
+  const { t } = useLanguage();
 
   const script = getScript(scriptId);
+
+  const pageTitles: Record<string, string> = {
+    '/': t.navBrowse,
+    '/flashcards': t.navFlashcards,
+    '/quiz': t.navQuiz,
+    '/write': t.navWrite,
+    '/read': `${t.navRead} — ${t.readTitle}`,
+  };
 
   const handleScriptChange = (id: ScriptId) => {
     setScriptId(id);
@@ -113,39 +114,42 @@ function App() {
   };
 
   useEffect(() => {
-    const pageTitle = pageTitles[location.pathname] ?? 'Browse';
-    document.title = `${pageTitle} — Learn Tibetan Scripts`;
-  }, [location.pathname]);
+    const pageTitle = pageTitles[location.pathname] ?? t.navBrowse;
+    document.title = `${pageTitle} — ${t.appTitle}`;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.pathname, t]);
 
   return (
     <div className="app">
+      <div className="app-toolbar">
+        <LanguageSwitcher />
+      </div>
+
       <header className="app-header">
-        <h1>Learn Tibetan Scripts</h1>
+        <h1>{t.appTitle}</h1>
         <p className="subtitle">Uchen · Ume · Gyug Yik (Drutsa)</p>
       </header>
 
       <ScriptTabs active={scriptId} onChange={handleScriptChange} />
 
-      <p className="script-description">{script.description}</p>
-      {script.fontCredit && (
-        <p className="script-credit">Rendered with the {script.fontCredit} font.</p>
-      )}
+      <p className="script-description">{t.scriptDescriptions[scriptId]}</p>
+      {script.fontCredit && <p className="script-credit">{t.renderedWithFont(script.fontCredit)}</p>}
 
       <nav className="mode-nav">
         <NavLink to="/" end className={({ isActive }) => (isActive ? 'active' : '')}>
-          Browse
+          {t.navBrowse}
         </NavLink>
         <NavLink to="/flashcards" className={({ isActive }) => (isActive ? 'active' : '')}>
-          Flashcards
+          {t.navFlashcards}
         </NavLink>
         <NavLink to="/quiz" className={({ isActive }) => (isActive ? 'active' : '')}>
-          Quiz
+          {t.navQuiz}
         </NavLink>
         <NavLink to="/write" className={({ isActive }) => (isActive ? 'active' : '')}>
-          Write
+          {t.navWrite}
         </NavLink>
         <NavLink to="/read" className={({ isActive }) => (isActive ? 'active' : '')}>
-          Read
+          {t.navRead}
         </NavLink>
       </nav>
 
@@ -159,6 +163,7 @@ function App() {
               setGroup={setGroup}
               selected={selected}
               setSelected={setSelected}
+              t={t}
             />
           }
         />
@@ -170,6 +175,7 @@ function App() {
               letters={consonants}
               fontFamily={script.fontFamily}
               glyphOffsetEm={script.glyphOffsetEm}
+              t={t}
             />
           }
         />
@@ -181,6 +187,7 @@ function App() {
               letters={consonants}
               fontFamily={script.fontFamily}
               glyphOffsetEm={script.glyphOffsetEm}
+              t={t}
             />
           }
         />
@@ -192,19 +199,22 @@ function App() {
               letters={consonants}
               fontFamily={script.fontFamily}
               glyphOffsetEm={script.glyphOffsetEm}
+              t={t}
             />
           }
         />
-        <Route path="/read" element={<Reading key={scriptId} fontFamily={script.fontFamily} />} />
+        <Route
+          path="/read"
+          element={<Reading key={scriptId} fontFamily={script.fontFamily} t={t} />}
+        />
       </Routes>
 
       <footer className="app-footer">
-        Uchen: Noto Serif Tibetan (Google Fonts). Ume &amp; Drutsa: Qomolangma family (Yalasoo),
-        via the{' '}
+        {t.footerPrefix}{' '}
         <a href="https://github.com/OpenPecha/tibetan-fonts" target="_blank" rel="noreferrer">
           OpenPecha tibetan-fonts
         </a>{' '}
-        collection.
+        {t.footerSuffix}
       </footer>
     </div>
   );
