@@ -4,40 +4,64 @@ export interface Letter {
   tibetan: string;
   pronunciation: string;
   group: 'consonant' | 'vowel' | 'number';
+  // Register/tone class in Central (Lhasa) Tibetan: root letters that were
+  // historically voiceless induce high tone, those historically voiced or
+  // sonorant induce low tone. nga/nya/na/ma/ya are "naturally" low here but
+  // shift to high tone when preceded by a prefix letter.
+  tone?: 'high' | 'low';
 }
 
 // The 30 root consonants (gsal byed sum cu)
 export const consonants: Letter[] = [
-  { id: 'ka', wylie: 'ka', tibetan: 'ཀ', pronunciation: 'ka', group: 'consonant' },
-  { id: 'kha', wylie: 'kha', tibetan: 'ཁ', pronunciation: 'kha', group: 'consonant' },
-  { id: 'ga', wylie: 'ga', tibetan: 'ག', pronunciation: 'ga', group: 'consonant' },
-  { id: 'nga', wylie: 'nga', tibetan: 'ང', pronunciation: 'nga', group: 'consonant' },
-  { id: 'ca', wylie: 'ca', tibetan: 'ཅ', pronunciation: 'cha', group: 'consonant' },
-  { id: 'cha', wylie: 'cha', tibetan: 'ཆ', pronunciation: 'chha', group: 'consonant' },
-  { id: 'ja', wylie: 'ja', tibetan: 'ཇ', pronunciation: 'ja', group: 'consonant' },
-  { id: 'nya', wylie: 'nya', tibetan: 'ཉ', pronunciation: 'nya', group: 'consonant' },
-  { id: 'ta', wylie: 'ta', tibetan: 'ཏ', pronunciation: 'ta', group: 'consonant' },
-  { id: 'tha', wylie: 'tha', tibetan: 'ཐ', pronunciation: 'tha', group: 'consonant' },
-  { id: 'da', wylie: 'da', tibetan: 'ད', pronunciation: 'da', group: 'consonant' },
-  { id: 'na', wylie: 'na', tibetan: 'ན', pronunciation: 'na', group: 'consonant' },
-  { id: 'pa', wylie: 'pa', tibetan: 'པ', pronunciation: 'pa', group: 'consonant' },
-  { id: 'pha', wylie: 'pha', tibetan: 'ཕ', pronunciation: 'pha', group: 'consonant' },
-  { id: 'ba', wylie: 'ba', tibetan: 'བ', pronunciation: 'ba', group: 'consonant' },
-  { id: 'ma', wylie: 'ma', tibetan: 'མ', pronunciation: 'ma', group: 'consonant' },
-  { id: 'tsa', wylie: 'tsa', tibetan: 'ཙ', pronunciation: 'tsa', group: 'consonant' },
-  { id: 'tsha', wylie: 'tsha', tibetan: 'ཚ', pronunciation: 'tsha', group: 'consonant' },
-  { id: 'dza', wylie: 'dza', tibetan: 'ཛ', pronunciation: 'dza', group: 'consonant' },
-  { id: 'wa', wylie: 'wa', tibetan: 'ཝ', pronunciation: 'wa', group: 'consonant' },
-  { id: 'zha', wylie: 'zha', tibetan: 'ཞ', pronunciation: 'zha', group: 'consonant' },
-  { id: 'za', wylie: 'za', tibetan: 'ཟ', pronunciation: 'za', group: 'consonant' },
-  { id: "'a", wylie: "'a", tibetan: 'འ', pronunciation: 'a (soft)', group: 'consonant' },
-  { id: 'ya', wylie: 'ya', tibetan: 'ཡ', pronunciation: 'ya', group: 'consonant' },
-  { id: 'ra', wylie: 'ra', tibetan: 'ར', pronunciation: 'ra', group: 'consonant' },
-  { id: 'la', wylie: 'la', tibetan: 'ལ', pronunciation: 'la', group: 'consonant' },
-  { id: 'sha', wylie: 'sha', tibetan: 'ཤ', pronunciation: 'sha', group: 'consonant' },
-  { id: 'sa', wylie: 'sa', tibetan: 'ས', pronunciation: 'sa', group: 'consonant' },
-  { id: 'ha', wylie: 'ha', tibetan: 'ཧ', pronunciation: 'ha', group: 'consonant' },
-  { id: 'a', wylie: 'a', tibetan: 'ཨ', pronunciation: 'a', group: 'consonant' },
+  { id: 'ka', wylie: 'ka', tibetan: 'ཀ', pronunciation: 'ka', group: 'consonant', tone: 'high' },
+  { id: 'kha', wylie: 'kha', tibetan: 'ཁ', pronunciation: 'kha', group: 'consonant', tone: 'high' },
+  { id: 'ga', wylie: 'ga', tibetan: 'ག', pronunciation: 'ga', group: 'consonant', tone: 'low' },
+  { id: 'nga', wylie: 'nga', tibetan: 'ང', pronunciation: 'nga', group: 'consonant', tone: 'low' },
+  { id: 'ca', wylie: 'ca', tibetan: 'ཅ', pronunciation: 'cha', group: 'consonant', tone: 'high' },
+  { id: 'cha', wylie: 'cha', tibetan: 'ཆ', pronunciation: 'chha', group: 'consonant', tone: 'high' },
+  { id: 'ja', wylie: 'ja', tibetan: 'ཇ', pronunciation: 'ja', group: 'consonant', tone: 'low' },
+  { id: 'nya', wylie: 'nya', tibetan: 'ཉ', pronunciation: 'nya', group: 'consonant', tone: 'low' },
+  { id: 'ta', wylie: 'ta', tibetan: 'ཏ', pronunciation: 'ta', group: 'consonant', tone: 'high' },
+  { id: 'tha', wylie: 'tha', tibetan: 'ཐ', pronunciation: 'tha', group: 'consonant', tone: 'high' },
+  { id: 'da', wylie: 'da', tibetan: 'ད', pronunciation: 'da', group: 'consonant', tone: 'low' },
+  { id: 'na', wylie: 'na', tibetan: 'ན', pronunciation: 'na', group: 'consonant', tone: 'low' },
+  { id: 'pa', wylie: 'pa', tibetan: 'པ', pronunciation: 'pa', group: 'consonant', tone: 'high' },
+  { id: 'pha', wylie: 'pha', tibetan: 'ཕ', pronunciation: 'pha', group: 'consonant', tone: 'high' },
+  { id: 'ba', wylie: 'ba', tibetan: 'བ', pronunciation: 'ba', group: 'consonant', tone: 'low' },
+  { id: 'ma', wylie: 'ma', tibetan: 'མ', pronunciation: 'ma', group: 'consonant', tone: 'low' },
+  { id: 'tsa', wylie: 'tsa', tibetan: 'ཙ', pronunciation: 'tsa', group: 'consonant', tone: 'high' },
+  { id: 'tsha', wylie: 'tsha', tibetan: 'ཚ', pronunciation: 'tsha', group: 'consonant', tone: 'high' },
+  { id: 'dza', wylie: 'dza', tibetan: 'ཛ', pronunciation: 'dza', group: 'consonant', tone: 'low' },
+  { id: 'wa', wylie: 'wa', tibetan: 'ཝ', pronunciation: 'wa', group: 'consonant', tone: 'low' },
+  { id: 'zha', wylie: 'zha', tibetan: 'ཞ', pronunciation: 'zha', group: 'consonant', tone: 'low' },
+  { id: 'za', wylie: 'za', tibetan: 'ཟ', pronunciation: 'za', group: 'consonant', tone: 'low' },
+  { id: "'a", wylie: "'a", tibetan: 'འ', pronunciation: 'a (soft)', group: 'consonant', tone: 'low' },
+  { id: 'ya', wylie: 'ya', tibetan: 'ཡ', pronunciation: 'ya', group: 'consonant', tone: 'low' },
+  { id: 'ra', wylie: 'ra', tibetan: 'ར', pronunciation: 'ra', group: 'consonant', tone: 'low' },
+  { id: 'la', wylie: 'la', tibetan: 'ལ', pronunciation: 'la', group: 'consonant', tone: 'low' },
+  { id: 'sha', wylie: 'sha', tibetan: 'ཤ', pronunciation: 'sha', group: 'consonant', tone: 'high' },
+  { id: 'sa', wylie: 'sa', tibetan: 'ས', pronunciation: 'sa', group: 'consonant', tone: 'high' },
+  { id: 'ha', wylie: 'ha', tibetan: 'ཧ', pronunciation: 'ha', group: 'consonant', tone: 'high' },
+  { id: 'a', wylie: 'a', tibetan: 'ཨ', pronunciation: 'a', group: 'consonant', tone: 'high' },
+];
+
+// The traditional 8-row layout used to teach the alphabet (the "ka-kha-ga-
+// nga" song), grouped by place/manner of articulation. Matches the order
+// `consonants` is already defined in above.
+export interface ConsonantRow {
+  label: string;
+  ids: string[];
+}
+
+export const consonantRows: ConsonantRow[] = [
+  { label: 'Guttural', ids: ['ka', 'kha', 'ga', 'nga'] },
+  { label: 'Palatal', ids: ['ca', 'cha', 'ja', 'nya'] },
+  { label: 'Dental', ids: ['ta', 'tha', 'da', 'na'] },
+  { label: 'Labial', ids: ['pa', 'pha', 'ba', 'ma'] },
+  { label: 'Dental affricate', ids: ['tsa', 'tsha', 'dza', 'wa'] },
+  { label: 'Palatal fricative', ids: ['zha', 'za', "'a", 'ya'] },
+  { label: 'Liquid & sibilant', ids: ['ra', 'la', 'sha', 'sa'] },
+  { label: 'Glottal', ids: ['ha', 'a'] },
 ];
 
 // The four vowel signs (dbyangs bzhi), shown attached to the base letter ཀ

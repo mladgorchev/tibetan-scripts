@@ -9,7 +9,7 @@ import { Quiz } from './components/Quiz';
 import { WritePractice } from './components/WritePractice';
 import { Reading } from './components/Reading';
 import { getScript, ScriptId } from './data/scripts';
-import { consonants, vowels, numbers, Letter } from './data/letters';
+import { consonants, consonantRows, vowels, numbers, Letter } from './data/letters';
 
 type GroupFilter = 'consonant' | 'vowel' | 'number';
 
@@ -54,6 +54,14 @@ function BrowsePage({
           Numbers
         </button>
       </div>
+      {group === 'consonant' && (
+        <p className="tone-legend">
+          Laid out in the traditional 8 rows by place of articulation.{' '}
+          <span className="letter-tone letter-tone-high legend-badge">H</span> high tone ·{' '}
+          <span className="letter-tone letter-tone-low legend-badge">L</span> low tone (nga/nya/na/ma/ya
+          shift to high tone after a prefix letter)
+        </p>
+      )}
       <LetterDetail
         letter={selected}
         fontFamily={script.fontFamily}
@@ -65,6 +73,7 @@ function BrowsePage({
         glyphOffsetEm={script.glyphOffsetEm}
         onSelect={setSelected}
         selectedId={selected?.id}
+        rows={group === 'consonant' ? consonantRows : undefined}
       />
     </>
   );
