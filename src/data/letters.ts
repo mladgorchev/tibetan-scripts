@@ -96,3 +96,9 @@ export function getAudioFileName(letter: Letter): string {
   if (letter.id === 'a') return 'a-chen';
   return letter.id.replace(/[^a-z0-9-]/gi, '');
 }
+
+// Recorded pronunciation clips currently only cover the 30 consonants.
+export function getAudioUrl(letter: Letter): string | null {
+  if (letter.group !== 'consonant') return null;
+  return `/audio/${getAudioFileName(letter)}.m4a`;
+}

@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
-import { Letter } from '../data/letters';
+import { getAudioUrl, Letter } from '../data/letters';
 import { Dictionary } from '../i18n/translations';
+import { playAudioUrl } from '../utils/audio';
 
 interface Props {
   letters: Letter[];
@@ -24,6 +25,14 @@ export function Flashcards({ letters, fontFamily, glyphOffsetEm = 0, t }: Props)
   const [flipped, setFlipped] = useState(false);
 
   const current = order[index];
+
+  const toggleFlip = () => {
+    setFlipped((f) => {
+      const next = !f;
+      if (next) playAudioUrl(getAudioUrl(current));
+      return next;
+    });
+  };
 
   const restart = () => {
     setOrder(shuffle(letters));
@@ -51,7 +60,7 @@ export function Flashcards({ letters, fontFamily, glyphOffsetEm = 0, t }: Props)
   return (
     <div className="flashcards">
       <div className="flashcards-progress">{progressLabel}</div>
-      <div className="flashcard" onClick={() => setFlipped((f) => !f)}>
+      <div className="flashcard" onClick={toggleFlip}>
         {!flipped ? (
           <span
             className="flashcard-glyph"

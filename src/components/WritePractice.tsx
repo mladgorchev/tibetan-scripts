@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import { Letter } from '../data/letters';
+import { getAudioUrl, Letter } from '../data/letters';
 import { HintKey, scoreDrawing, ScoreResult } from '../utils/handwriting';
 import { Dictionary } from '../i18n/translations';
+import { PlayAudioButton } from './PlayAudioButton';
 
 interface Props {
   letters: Letter[];
@@ -240,7 +241,12 @@ export function WritePractice({ letters, fontFamily, glyphOffsetEm = 0, t }: Pro
 
   return (
     <div className="write-practice">
-      <div className="write-progress">{t.writeProgress(index + 1, order.length, current.wylie)}</div>
+      <div className="write-progress">
+        {t.writeProgress(index + 1, order.length, current.wylie)}
+        {getAudioUrl(current) && (
+          <PlayAudioButton src={getAudioUrl(current)!} label={`Play ${current.wylie}`} />
+        )}
+      </div>
 
       <div className="brush-selector">
         {BRUSH_ORDER.map((id) => (

@@ -490,6 +490,28 @@
 
 .write-progress {
   opacity: 0.7;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.play-audio-btn {
+  background: rgba(128, 128, 128, 0.12);
+  border: 1px solid transparent;
+  border-radius: 999px;
+  width: 1.9rem;
+  height: 1.9rem;
+  padding: 0;
+  font-size: 0.9rem;
+  line-height: 1;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.play-audio-btn:hover {
+  border-color: #646cff;
 }
 
 .brush-selector {

@@ -10,9 +10,10 @@ import { WritePractice } from './components/WritePractice';
 import { Reading } from './components/Reading';
 import { LanguageSwitcher } from './components/LanguageSwitcher';
 import { getScript, ScriptId } from './data/scripts';
-import { consonants, consonantRows, vowels, numbers, Letter } from './data/letters';
+import { consonants, consonantRows, vowels, numbers, getAudioUrl, Letter } from './data/letters';
 import { useLanguage } from './i18n/LanguageContext';
 import { Dictionary } from './i18n/translations';
+import { playAudioUrl } from './utils/audio';
 
 type GroupFilter = 'consonant' | 'vowel' | 'number';
 
@@ -38,6 +39,12 @@ function BrowsePage({
   t: Dictionary;
 }) {
   const letters = groupLetters[group];
+
+  const handleSelect = (letter: Letter) => {
+    setSelected(letter);
+    playAudioUrl(getAudioUrl(letter));
+  };
+
   return (
     <>
       <div className="group-filter">
@@ -72,7 +79,7 @@ function BrowsePage({
             letters={letters}
             fontFamily={script.fontFamily}
             glyphOffsetEm={script.glyphOffsetEm}
-            onSelect={setSelected}
+            onSelect={handleSelect}
             selectedId={selected?.id}
             rows={group === 'consonant' ? consonantRows : undefined}
             rowLabels={t.rowLabels}
